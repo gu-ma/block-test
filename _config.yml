@@ -1,2 +1,26 @@
+title: Block Test
+description: Class block template site
+url: "https://gu-ma.github.io"
+baseurl: "/block-test"
+
+# Use an official GitHub Pages theme
+remote_theme: "pages-themes/cayman@v0.2.0"
+plugins:
+  - jekyll-remote-theme
+
+# Ensure pages get a valid layout from the theme
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+
+# Keep Jekyll from processing large/unnecessary dirs (we merge Slidev separately)
 exclude:
   - usage.md
+  - slides
+  - node_modules
+  - _site_jekyll
+  - _site_slides
+  - _site_combined
+  - .github
