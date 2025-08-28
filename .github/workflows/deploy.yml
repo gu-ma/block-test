@@ -3,7 +3,7 @@ name: Deploy pages
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [refactor]
 
 permissions:
   contents: read
@@ -24,6 +24,15 @@ jobs:
         with:
           submodules: true
 
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+
       - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
@@ -35,16 +44,22 @@ jobs:
         working-directory: slides
         run: nci
 
-      - name: Build
+      - name: Compute Slidev base
+        id: slidev_base
+        run: |
+          if [[ "${{ github.event.repository.name }}" == *".github.io" ]]; then
+            echo "BASE=/slides/" >> "$GITHUB_ENV"
+          else
+            echo "BASE=/${{ github.event.repository.name }}/slides/" >> "$GITHUB_ENV"
+          fi
+      - name: Build Slidev into _site/slides
         working-directory: slides
-        run: nr build --base /${{github.event.repository.name}}/
+        run: nr build --base "${BASE}" --out ../_site/slides
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: slides/dist
+          path: _site
 
   deploy:
     environment:
