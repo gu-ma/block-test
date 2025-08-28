@@ -31,7 +31,7 @@ jobs:
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./
-          destination: ./_site
+          destination: ./_site_jekyll
 
       - uses: actions/setup-node@v4
         with:
@@ -52,14 +52,21 @@ jobs:
           else
             echo "BASE=/${{ github.event.repository.name }}/slides/" >> "$GITHUB_ENV"
           fi
-      - name: Build Slidev into _site/slides
+      - name: Build Slidev into _site_slides
         working-directory: slides
-        run: nr build --base "${BASE}" --out ../_site/slides
+        run: nr build --base "${BASE}" --out ../_site_slides
 
 
+      - name: Combine Jekyll and Slidev outputs
+        run: |
+          rm -rf _site_combined
+          mkdir -p _site_combined
+          cp -a _site_jekyll/. _site_combined/
+          mkdir -p _site_combined/slides
+          cp -a _site_slides/. _site_combined/slides/
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: _site_combined
 
   deploy:
     environment:

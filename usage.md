@@ -31,3 +31,46 @@ This template is designed to help you quickly scaffold and organize class blocks
 ---
 
 For questions or suggestions, open an issue or contact the maintainer.
+
+## Deploying to GitHub Pages
+
+This template is configured to publish:
+- the root site with Jekyll (from the repository root), and
+- the Slidev presentation at the sub-path `/slides`.
+
+Reference: https://sli.dev/guide/hosting#github-pages
+
+How it works:
+- A GitHub Actions workflow at `.github/workflows/deploy.yml`:
+  - Builds the Jekyll site into `_site/`
+  - Builds Slidev into `_site/slides` with the proper base path
+  - Uploads `_site` as the Pages artifact and deploys it
+- The Slidev build base is computed automatically:
+  - For a user/org pages repository named `<user>.github.io`: base is `/slides/`
+  - For a project repository: base is `/<repo>/slides/`
+  - Note: Slidev’s `--base` must start and end with a slash
+
+Requirements:
+1. In GitHub → Settings → Pages, set Source to “GitHub Actions”.
+2. Ensure the `slides` submodule is initialized after cloning:
+   ```bash
+   git submodule update --init --recursive
+   ```
+3. Push to the default branch to trigger the workflow.
+
+URLs after deployment:
+- Root site: `https://<user>.github.io/<repo>/` (or `https://<user>.github.io/` for user/org pages)
+- Slides: `https://<user>.github.io/<repo>/slides/` (or `https://<user>.github.io/slides/` for user/org pages)
+
+Favicon for Slidev:
+- The Slidev template exposes static files from `slides/public`. To ensure the favicon works on GitHub Pages, set the frontmatter favicon to the `.ico` in `slides/public/favicons/`:
+  ```yaml
+  ---
+  favicon: ./favicons/favicon.ico
+  ---
+  ```
+  The file is already present at `slides/public/favicons/favicon.ico`.
+
+Notes:
+- Deep-link refreshes in SPAs on Pages can 404 with history mode. If needed, set `routerMode: hash` in the Slidev frontmatter to avoid that.
+- The workflow checks out submodules so CI will build `slides` correctly.
