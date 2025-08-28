@@ -1,5 +1,6 @@
 ---
-layout: inner
+layout: default
+permalink: /
 title: "Block: [Theme] – [Block Name] ([Block Type])"
 ---
 
